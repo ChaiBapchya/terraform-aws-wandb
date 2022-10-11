@@ -145,6 +145,12 @@ module "eks" {
     }
   }
 
+  node_group_defaults = {
+    metadata_options = {
+      http_tokens = "required"
+    }
+  }
+
   tags = {
     GithubRepo         = "wandb"
     GithubOrg          = "terraform-aws-wandb"
