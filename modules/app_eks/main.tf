@@ -112,17 +112,17 @@ locals {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 17.23"
+  version = "~> 18.0"
 
   cluster_name    = var.namespace
   cluster_version = local.cluster_version
 
   vpc_id  = var.network_id
-  subnets = var.network_private_subnets
+  subnet_ids = var.network_private_subnets
 
-  map_accounts = var.map_accounts
-  map_roles    = var.map_roles
-  map_users    = var.map_users
+  # map_accounts = var.map_accounts
+  # map_roles    = var.map_roles
+  # map_users    = var.map_users
 
   cluster_endpoint_private_access      = true
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access
@@ -135,13 +135,18 @@ module "eks" {
     }
   ] : null
 
-  node_groups = {
-    primary = {
-      desired_capacity = 2,
-      max_capacity     = 5,
-      min_capacity     = 2,
-      instance_type    = ["m5.xlarge"],
-      iam_role_arn     = aws_iam_role.node.arn
+  # eks_managed_node_group_defaults = {
+  #   disk_size      = 50
+  #   instance_types = ["m5.xlarge"]
+  # }
+
+  eks_managed_node_groups = {
+    node_groups = {
+      min_size     = 2
+      max_size     = 5
+      desired_size = 2
+
+      instance_types = ["m5.xlarge"]
     }
   }
 

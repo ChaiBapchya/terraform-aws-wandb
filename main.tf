@@ -122,9 +122,9 @@ module "app_eks" {
   namespace   = var.namespace
   kms_key_arn = local.kms_key_arn
 
-  map_accounts = var.kubernetes_map_accounts
-  map_roles    = var.kubernetes_map_roles
-  map_users    = var.kubernetes_map_users
+  # map_accounts = var.kubernetes_map_accounts
+  # map_roles    = var.kubernetes_map_roles
+  # map_users    = var.kubernetes_map_users
 
   bucket_kms_key_arn   = local.provision_file_storage ? local.kms_key_arn : var.bucket_kms_key_arn
   bucket_arn           = data.aws_s3_bucket.file_storage.arn
@@ -161,11 +161,11 @@ module "app_lb" {
   network_public_subnets  = local.network_public_subnets
 }
 
-resource "aws_autoscaling_attachment" "autoscaling_attachment" {
-  for_each               = module.app_eks.autoscaling_group_names
-  autoscaling_group_name = each.value
-  alb_target_group_arn   = module.app_lb.tg_app_arn
-}
+# resource "aws_autoscaling_attachment" "autoscaling_attachment" {
+#   for_each               = module.app_eks.autoscaling_group_names
+#   autoscaling_group_name = each.value
+#   alb_target_group_arn   = module.app_lb.tg_app_arn
+# }
 
 module "redis" {
   count     = var.create_elasticache ? 1 : 0
