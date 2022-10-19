@@ -1,3 +1,9 @@
+variable "region" {
+  type        = string
+  description = "Region to deploy resources"
+  default     = "us-west-1"
+}
+
 variable "namespace" {
   type        = string
   description = "Name prefix used for resources"
