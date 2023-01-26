@@ -106,19 +106,33 @@ resource "aws_iam_role" "node" {
   }
 }
 
+data "aws_eks_cluster" "cluster" {
+  name = module.eks.cluster_id
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_id
+}
+
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 17.23"
+  version = "~> 18.0"
+
+  prefix_separator                   = ""
+  iam_role_name                      = var.namespace
+  cluster_security_group_name        = var.namespace
+  cluster_security_group_description = "EKS cluster security group."
 
   cluster_name    = var.namespace
   cluster_version = var.cluster_version
 
-  vpc_id  = var.network_id
-  subnets = var.network_private_subnets
+  vpc_id     = var.network_id
+  subnet_ids = var.network_private_subnets
 
-  map_accounts = var.map_accounts
-  map_roles    = var.map_roles
-  map_users    = var.map_users
+  # map_accounts = var.map_accounts
+  # map_roles    = var.map_roles
+  # map_users    = var.map_users
 
   cluster_endpoint_private_access      = true
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access
@@ -131,7 +145,7 @@ module "eks" {
     }
   ] : null
 
-  node_groups = {
+  eks_managed_node_groups = {
     primary = {
       version          = var.cluster_version
       desired_capacity = 2,
